@@ -3,6 +3,15 @@
 -- Only required if you have packer configured as `opt`
 vim.cmd [[packadd packer.nvim]]
 
+local function get_plugins_for_profile(profile)
+    local plugins = {
+        latex = {
+            { 'lervag/vimtex' }
+        }
+    }
+    return plugins[profile] or {}
+end
+
 return require('packer').startup(function(use)
 	-- Packer can manage itself
 	use 'wbthomason/packer.nvim'
@@ -20,4 +29,18 @@ return require('packer').startup(function(use)
             ts_update()
         end,
     }
+
+    -- LSP Zero
+    use {'williamboman/mason.nvim'}
+    use {'williamboman/mason-lspconfig.nvim'}
+    use {'neovim/nvim-lspconfig'}
+    use {'hrsh7th/nvim-cmp'}
+    use {'hrsh7th/cmp-nvim-lsp'}
+
+
+    -- Profile based packages
+    local profile_plugins = get_plugins_for_profile(os.getenv("VIM_PROFILE"))
+    for _, plugin in ipairs(profile_plugins) do
+        use(plugin)
+    end
 end)
